@@ -55,19 +55,39 @@ exports.addBootcamp = async (req, res) => {
 // @desc [PUT] edit a single bootcamp
 // @endpoint /api/v1/bootcamps/:id
 // @access Needs auth/admin role
-exports.editBootcamp = (req, res) => {
-  res.status(200).json({
-    sucess: true,
-    msg: `Bootcamp id: ${req.params.id} was edited`,
-  });
+exports.editBootcamp = async (req, res) => {
+  try {
+    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    })
+
+    if(!bootcamp) {
+      return res.status(404).json({status: 'fail', msg: 'Bootcamp not found'})
+    }
+
+    res.status(200).json({status: "success", data: bootcamp})
+
+
+  } catch (error) {
+    return res.status(400).json({status: 'fail', msg: error})
+  }
 };
 
 // @desc [DELETE] a single bootcamp
 // @endpoint /api/v1/bootcamps/:id
 // @access Needs auth/admin role
-exports.deleteBootcamp = (req, res) => {
-  res.status(200).json({
-    sucess: true,
-    msg: `Deleted bootcamp: ${req.params.id}`,
-  });
+exports.deleteBootcamp = async (req, res) => {
+  try {
+    const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+
+    if(!bootcamp) {
+      return res.status(404).json({status: 'fail', msg: 'Bootcamp not found'})
+    }
+
+    res.status(200).json({status: "success", data: {}})
+
+  } catch (error) {
+    return res.status(400).json({status: 'fail', msg: error})
+  }
 };
