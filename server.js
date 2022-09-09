@@ -1,8 +1,10 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const connectDB = require('./config/database.js')
-// middleware
+
+// middlewares unoirts
 const morgan = require('morgan')
+const errorHandler = require('./middlewares/errorHandler')
 
 // route imports
 const bootcamps = require('./routes/bootcamps')
@@ -20,7 +22,9 @@ app.use(express.json())
 if(process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
+
 app.use('/api/v1/bootcamps', bootcamps)
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT
