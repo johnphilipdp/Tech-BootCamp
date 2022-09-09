@@ -14,11 +14,7 @@ connectDB()
 
 const app = express()
 
-const logger = (req, res, next) => {
-  const msg = `${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`
-  console.log(msg)
-  next()
-}
+app.use(express.json())
 
 // using middleware to call on the routes
 if(process.env.NODE_ENV === 'development') {
