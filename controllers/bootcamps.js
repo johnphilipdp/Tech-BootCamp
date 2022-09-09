@@ -1,5 +1,7 @@
-// import our mongoose model
+// import custm error message from the utils
+const ErrorResponse = require('../utils/ErrorResponse')
 
+// import our mongoose model
 const Bootcamp = require("../models/Bootcamp");
 
 // @desc [GET] all the bootcamps
@@ -31,8 +33,7 @@ exports.getBootcamp = async (req, res, next) => {
     }
     res.status(200).json({ success: "true", data: bootcamp });
   } catch (error) {
-    console.log(error)
-    next(error)
+    next(new ErrorResponse(`Bootcamp with the ID of ${req.params.id} is not found.`, 404))
   }
 };
 
