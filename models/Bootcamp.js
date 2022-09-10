@@ -2,19 +2,6 @@ const slugify = require('slugify')
 
 const mongoose = require("mongoose");
 
-// scheme types properties.
-// name - must have a type/required/unique/trim/maxLength
-// slug -
-// description - type/required/maxLength
-// web - type/match - regex to test if its a valid web url etc...
-// phone - type/maxLength
-// email - type/match
-// address - type/required
-// averageRating - type/min/max
-// averageCost - type
-// photo - type/default - 'no-photo.jpg'
-// housing - type
-
 const BootcampSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -102,10 +89,12 @@ const BootcampSchema = new mongoose.Schema({
 });
 
 // Do something here..
-BootcampSchema.pre('save', function() {
+BootcampSchema.pre('save', function(next) {
   this.slug = slugify(this.name, {
     lower: true
   })
+
+  next()
 })
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);

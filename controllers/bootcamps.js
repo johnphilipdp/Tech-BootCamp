@@ -10,12 +10,23 @@ const Bootcamp = require("../models/Bootcamp");
 // @endpoint /api/v1/bootcamps
 // @access PUBLIC
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-    const bootcamps = await Bootcamp.find();
+    // @TODO: Implement advance querying 
+    let query;
+
+    // filters the query to insert "$" sign to the query
+    let queryString = JSON.stringify(req.query)
+    queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => {
+      return '$' + match
+    })
+
+    query = await Bootcamp.find(JSON.parse(queryString))
+
     res.status(200).json({
       success: "true",
-      total: bootcamps.length,
-      data: bootcamps,
+      total: query.length,
+      data: query,
     });
+    
 });
 
 // @desc [GET] a single bootcamp
