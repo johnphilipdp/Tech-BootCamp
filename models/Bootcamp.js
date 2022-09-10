@@ -1,5 +1,4 @@
-const webUrlChecker =
-  "https?://(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)";
+const slugify = require('slugify')
 
 const mongoose = require("mongoose");
 
@@ -101,5 +100,12 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+// Do something here..
+BootcampSchema.pre('save', function() {
+  this.slug = slugify(this.name, {
+    lower: true
+  })
+})
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
