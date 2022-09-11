@@ -13,20 +13,43 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     // @TODO: Implement advance querying 
     let query;
 
+    const reqQuery = {...req.query}
+
+    // exlude this params 
+    const excludedFields = ['select', 'sort']
+
+    excludedFields.forEach(field => delete reqQuery[field])
+
     // filters the query to insert "$" sign to the query
-    let queryString = JSON.stringify(req.query)
+    let queryString = JSON.stringify(reqQuery)
     queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => {
       return '$' + match
     })
 
-    query = await Bootcamp.find(JSON.parse(queryString))
+    query = Bootcamp.find(JSON.parse(queryString))
+
+    // Select function
+    if (req.query.select) {
+      const fields = req.query.select.split(',').join(' ')
+      query = query.select(fields)
+    }
+
+    // Sort function
+    if(req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ')
+      query = query.sort(sortBy)
+    } else {
+      query = query.sort('-createdAt')
+    }
+
+    const bootcamps = await query
 
     res.status(200).json({
       success: "true",
-      total: query.length,
-      data: query,
+      total: bootcamps.length,
+      data: bootcamps,
     });
-    
+
 });
 
 // @desc [GET] a single bootcamp
