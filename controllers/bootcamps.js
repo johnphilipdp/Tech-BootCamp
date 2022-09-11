@@ -48,16 +48,35 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 10
     const startIndex = (page - 1) * limit
+    const endIndex = page * limit
+    const totalCollections = await Bootcamp.countDocuments()
 
     query = query.skip(startIndex).limit(limit)
+
+    const pagination = {}
+
+    if(endIndex < totalCollections) {
+      pagination.next = {
+        page: page + 1,
+        limit
+      }
+    }
+
+    if(startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit
+      }
+    }
 
 
     const bootcamps = await query
 
     res.status(200).json({
       success: "true",
+      pagination,
       total: bootcamps.length,
-      data: bootcamps,
+      data: bootcamps
     });
 
 });
